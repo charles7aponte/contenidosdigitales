@@ -1,0 +1,1491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="1200" height="750"
+					   applicationComplete="init()"
+					   showStatusBar="false"
+					   >	
+	
+	<fx:Style source="micss.css"/>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import clases.Cargador;
+			import clases.Global;
+			import clases.XmlPath;
+			
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			import popup.popup_bloc;
+			
+			
+			/*****	VARIABLES */
+			
+			private var banderaMenuDe:int=1; /// 1 ---> se esta mostrando  y 2 --> esta oculto menu izquie 
+			private var banderaBarraIzq:int=1; /// 1 ---> se esta mostrando  y 2 --> esta oculto barra derech
+			private var banderaBanner:int=1; /// 1 ---> se esta mostrando  y 2 --> esta oculto barra derech
+			private var numeroEscala:Number=1.31578;// numero de aumento relacionado
+			private var anchoContenido:int;// tmaaños original ancho del Ipad
+			private var altoContenido:int;// tmaaños original  alto del Ipad		
+			
+			
+			
+			
+			
+			
+			
+			
+			private var anchoPantallaIpad:int;//  tmaaños original ancho del Ipad
+			private var altoPantallaIpad:int;// tmaaños original alto del Ipad
+			private var contenidoFull:Boolean=false;//indica si el ccontenido exta expandido
+			
+			
+			public var splash_1:splash=new splash();
+			
+			public var urlPresentacion:String=Global.RUTA_SWF_PRESENTACION;
+			
+			///direcion de los swf
+			public var urlSwf:Array=[
+									"assets/contenido/p1.swf",
+									"assets/contenido/p2.swf",
+									
+									];
+			public var miURLExpresion:Array=[];
+			
+			public var cantidaFotogramas:Array=[];
+			public var totalFotogramas:int=0;
+			public var contadorFotogramas:int=0;
+			public var contadorFotogramasRelativo:int=0;
+			
+			
+			public var xmlPaht:XmlPath = new XmlPath();
+			public var idioma:String = "ESP";
+			
+			
+			private var seccion:int =0;// repesenta si esta la presentacion abierta con 2, 1 evaluacion , 0 por defecto
+			
+			
+			//
+			
+			
+			/////
+			var fileRef:Cargador= new Cargador();
+			
+			
+			
+			public function clickBloc(e:MouseEvent):void{
+			
+			
+				popupCierre();
+			}
+			
+			
+			
+			
+			
+			/**
+			 * llamada al popup
+			 * */
+			
+			public  function popupCierre():void {
+				var win : popup_bloc = new popup_bloc();
+				PopUpManager.addPopUp(win,this,false);
+				PopUpManager.centerPopUp(win);
+				
+				//win.addEventListener(CloseEvent.CLOSE,cierreAutomatico);
+				
+			}
+			
+			
+			
+			
+			/**************
+			 * conecta los eventos 
+			 * de javascritp on las acciones realizadas por 
+			 * as3
+			 * *******************/			
+			public function enlaceAS3_Javascript():void{
+			
+			
+
+				var bton=presentacion_html.htmlLoader.window.$("#bton_guardar");
+				var btonImagenExt=presentacion_html.htmlLoader.window.$("#bton_imagene_externa");
+				
+				
+				bton.click(function(){
+				
+					fileRef.exportarPresentacion();
+					
+				});
+				
+				
+				btonImagenExt.click(function(){
+					
+					fileRef.open();
+				
+				});
+				
+			
+			}
+			
+			
+			
+			
+			/*****************************
+			 *  genera el Json de las paginas de javascrit
+			 * 
+			 * **/
+			public function presentacionJs_JSONPaginas():String{
+			
+				return presentacion_html.htmlLoader.window.manejadorPaginas.getStringJsonPaginas();
+			}
+			
+			
+			
+			
+			
+			/*****************************
+			 *  genera el Json de las paginas de javascrit
+			 * 
+			 * **/
+			public function presentacionJs_JSONElementos():String{
+				
+				return presentacion_html.htmlLoader.window.getStringJsonElmentos();
+			}
+			
+			
+			
+			
+			
+			
+			/*****************************
+			 *  actualiz en la presentacion las imagenes externas 
+			 * 
+			 * **/
+			public function presentacionJs_HtmlActulizarImagenesExternas(arrayString:String):void{
+				
+				trace(arrayString);
+				 presentacion_html.htmlLoader.window.actualizarImagenesExt(arrayString);
+			}
+
+			
+
+			
+			
+			
+			/**********************
+			 * *actualiza las rutas segun el idioma
+			 */
+			 public function actualizaRutasIdioma():void{
+			 
+				 urlSwf= new Array();
+				 
+				 for(var i:int=0; i<miURLExpresion.length ; i++)
+				 {
+					var partesRuta:Array=	 (miURLExpresion[i]+"").split("/$IDIOMA$/");
+					
+					if(partesRuta.length>=2)
+					{
+						urlSwf[i]=partesRuta[0]+"/"+ this.idioma+"/"+partesRuta[1];
+						trace("........ "+urlSwf[i])
+					}
+					
+					
+					
+				 }
+			 
+			 }
+			
+			
+			
+			
+			
+			/**********************
+			 * 
+			 * selcciona una imagne 
+			 * */
+			public function inicioAbrirImagne():void{
+				
+				fileRef.open();
+			}
+			
+			
+			
+			/********************
+			 * 
+			 *  conecta el SWf con el teclado, los eventos son recibodos por el Flex y es pasodo por paramentro este evento al SWF cargado
+			 * */
+			public function activarSWF(letra:KeyboardEvent):void{
+				
+				
+				//if(Global.recibeTecla)	
+				{
+					try{
+						
+						//if(contenido_swf!=null && contenido_swf.content!=null)
+						//return ;
+						
+						
+						var miSwf:Object=(pantallaIpad.content as  Object);
+						if(miSwf!=null && miSwf['activar'])
+						{
+							
+							miSwf.activar(letra);
+							
+							
+						}
+						
+						
+						
+						
+					}catch(e:ErrorEvent)
+					{
+						
+						trace("ERROR EN ACTIVAR SWF");
+						//Alert.show("Error");
+						
+					}
+					catch(e2:Error){
+						trace("Error en activar");
+					}
+				}	
+				
+			}
+			
+			
+			
+			
+			
+			
+			
+			/********************
+			 * 
+			 *  al precionar un a tecla para key 
+			 * do
+			 * */
+			public function liberarSWF(letra:KeyboardEvent):void{
+				
+				//if(Global.recibeTecla)
+				{	
+					
+					
+					
+					try{
+						var miSwf:Object=(pantallaIpad.content as  Object);
+						
+						if(miSwf!=null && miSwf['liberar'])
+						{
+							
+							
+							//Alert.show("liberar "+letra.keyCode);
+						
+								miSwf.liberar(letra);
+								
+							
+						}
+						
+						
+					}catch(e:ErrorEvent)
+					{
+						
+						trace("ERROR EN ACTIVAR SWF");
+						//Alert.show("Error");
+					}catch(e2:Error)
+					{
+						
+						trace("ERROR EN LIBERAR");
+						//Alert.show("Error");
+					}
+					
+				}//fin de el if	
+				
+			}// fin de la funcion 
+			
+			
+			
+			
+			
+			
+			public function init():void{			
+				
+				//		
+				
+				
+				
+				Global.PRINCIPAL_=this;
+
+				
+				cambioTamaIpad(1);
+			
+				//cargar elemento 
+				presentacion_html.location=Global.RUTA_PRESENTACION+Global.NOMBRE_PRESENTACION;
+				
+				
+				
+				bton_presentacion.addEventListener(MouseEvent.CLICK,clickEnPresentacion);
+				cerrar.addEventListener(MouseEvent.CLICK,clickEnCerrar);
+				bton_presentacion.addEventListener(MouseEvent.ROLL_OVER,resaltar);
+				bton_presentacion.addEventListener(MouseEvent.ROLL_OUT,normal);
+				fondo_salidar_Ipad.addEventListener(MouseEvent.CLICK,clickCerrarPresentacion);
+				imagen_dispositivo.addEventListener(MouseEvent.CLICK,clickAbrirPresentacion);
+				bton_bloc.addEventListener(MouseEvent.CLICK, clickBloc);
+				
+				
+				//focusEnabled=false;
+				stage.addEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);	
+				stage.addEventListener(KeyboardEvent.KEY_UP,onkeyUP);
+				
+				
+				///
+				xmlPaht.accionAlCargar(function():void{
+					
+					miURLExpresion= xmlPaht.consultaRutas();
+					actualizaRutasIdioma();
+					cargarMenuPresentacion();
+					});
+				
+				xmlPaht.leerXML(Global.XML_RUTA_PATH);
+				
+				
+				
+				//enlces 
+				fileRef.cargador= cargador_1;
+				
+				
+	           // visible=false;			   
+				lanzarSplash();
+				
+				
+				
+				
+				
+				//trace(gato.htmlLoader.window.gato1());
+			}
+			
+			
+		
+			
+			
+			
+			
+			private function onkeyUP(tecla:KeyboardEvent):Boolean{
+				
+			
+				if(tecla.keyCode==27)
+				{
+					trace("onkeyDown "+tecla);
+				//	tecla.ctrlKey=false;
+					//tecla.stopPropagation();
+				//	focusManager.defaultButtonEnabled=true;
+					//stage.focus=this;//devuelve el foco al elemento principal
+					
+					
+				}
+				
+				liberarSWF(tecla);
+				
+				return false;
+			}
+			
+			
+			
+			
+			
+			/*************************
+			 * dar click sobre presentacion 
+			 * **/
+			private function clickEnPresentacion(e:MouseEvent):void{
+			
+				seccion=1;			
+				
+				presentacion_html.visible=true;				
+				pantallaIpad.visible=false;
+				tooglePresentacion();				
+				
+			
+			}
+			
+			
+			
+			
+			
+			private function onKeyDown(tecla:KeyboardEvent):Boolean{
+				//trace("pulsé la tecla: "+tecla.keyCode);   
+				
+			
+				if(tecla.keyCode==27)
+				{
+					/*trace("onkeyDown "+tecla);
+					tecla.ctrlKey=false;
+					tecla.stopPropagation();
+					stage.focus=this;//devuelve el foco al elemento principal
+					*/
+				}
+				
+				
+				activarSWF(tecla);
+				
+			return false
+			}	
+			
+				
+			
+			
+			
+			/**
+			 * carga el swf de presentacion
+			 * 
+			 * */
+			public function cargarMenuPresentacion():void{
+				
+				
+				//carga por defecto la seccion 0
+				if(seccion==1)
+				{
+					presentacion_html.visible=false;
+				}
+				pantallaIpad.visible=true;
+				seccion=0;
+				
+				
+				
+				
+				cargarSWFContenido(urlPresentacion,function():void{
+					
+				
+					
+					
+					var swf:Object=(pantallaIpad.content as Object);
+					//if(swf && swf['presentacion_1'])
+					{
+						
+						trace("paso valor  "+swf.valor);
+						
+						swf.presentacion_1 = function():void{						
+							cargaPresentacion1(0)
+						
+							};
+						
+						swf.presentacion_2 = function():void{						
+							cargaPresentacion1(1)
+							
+						};
+						
+						swf.presentacion_3 = function():void{						
+							cargaPresentacion1(2)
+							
+						};
+						
+						
+						swf.presentacion_4 = function():void{						
+							cargaPresentacion1(3)
+							
+						};
+						
+						
+						swf.presentacion_5 = function():void{						
+							cargaPresentacion1(0)
+							
+						};
+						
+						
+						
+						
+						trace("paso "+swf.presentacion_1);
+						
+					
+					}
+					
+			
+				});	
+			
+			
+			}
+			
+			
+			
+			
+			
+			
+			
+			/**
+			 * carga el primer swf
+			 * @param numero int debe iniciar desde 0 hasta el ulitmi elemnenot 
+			 * */
+			public function cargaPresentacion1(numero:int):void{
+				
+			
+				
+				
+				cargarSWFContenido(urlSwf[numero],function():void{
+					
+					
+					/*
+					var swf:Object=(pantallaIpad.content as Object);
+					//if(swf && swf['cantidadFotogramas'] && swf['navegacionSiguiente'] && 
+					//	swf['navegacionAnterior'] && swf['setPagina'] )
+					{
+						cantidaFotogramas=swf.cantidadFotogramas();
+						
+						trace("candtida fotograma "+cantidaFotogramas.length);
+						totalFotogramas=0;
+						
+						for(var i:int=0;i<cantidaFotogramas.length; i++)
+						{
+							totalFotogramas+=parseInt(cantidaFotogramas[i]);
+						}
+						
+						contadorFotogramas=1;
+						contadorFotogramasRelativo=1;
+						
+						//actualiza el paginado de swf
+						swf.setPagina(contadorFotogramasRelativo,totalFotogramas);
+							
+						
+						
+						
+					}
+					*/
+				});	
+			
+			}
+			
+			
+			
+			
+			
+			
+			/***
+			 * 
+			 * cambia de fotograma 
+			 * @param int posicionFotograma cambio de fotograma 
+			 */ 
+			public function cambioFotograma(posicionFotograma:int ):void{
+			
+				var totalFotogramasAux:int=1;
+				var miSwf:Object = (pantallaIpad.content as Object);					
+				
+				
+				for(var i:int=0; i<cantidaFotogramas.length; i++)
+				{
+					
+					
+					if(posicionFotograma==totalFotogramasAux)
+					{
+						///conforma la funcion por decomposion y la ejecuta
+						this["cargaPresentacion"+(i+1)]();
+					}
+					else 					
+					if(miSwf["saltarFotograma"])
+					{
+						if(posicionFotograma<totalFotogramasAux)
+						{
+							miSwf.saltarFotograma(contadorFotogramasRelativo);
+							miSwf.setPagina(this.contadorFotogramasRelativo, this.totalFotogramas);
+							
+						}
+						//debe carga totalmente un swf
+					
+					}// fin validcion si existe saltarFotograma como funciton publica 
+					
+					totalFotogramasAux+=parseInt(cantidaFotogramas[i]);
+					
+				}//fin de for de revision de cantidad de fotogramas 
+			
+			}
+			
+			
+			/****
+			 * agranda el IPad o lo miniza
+			 */ 
+			public function tooglePresentacion():void{
+			
+				
+		
+				if(contenidoFull)
+				{
+					cerrarPresentacion();
+				}
+				else{
+					activarEnPresentacion();
+				}
+			
+			} 
+			
+			
+			
+			/**
+			 * cerrar presentacion al dar click
+			 * cierra la presentacion al dar click
+			 */ 
+			public function clickCerrarPresentacion(e:MouseEvent):void{
+			
+			   cerrarPresentacion();
+			}
+			
+			
+			
+			/***
+			 * carga un swf 
+			 * segun la url y la accion a realizar segun la funcion enviad por parametros
+			 */ 
+			public function cargarSWFContenido(url:String,accion:Function):void{
+			
+				var loader:Loader = new Loader();
+				loader.load(new URLRequest(url));
+				
+				cargador_1.visible=true;
+			
+				
+				
+				
+				//pantallaIpad.load(url);
+				
+		
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, insertMovie);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, errorSwf);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, errorSwf);
+			//	loader.addEventListener(ProgressEvent.PROGRESS, SWFDownloadProgress);
+				
+				function errorSwf():void{
+					cargador_1.visible=false;
+				
+				}
+				
+				
+				
+				 
+				
+				//cargarContenidCompleto=function insertMovie(evt:Event):void{	
+				function insertMovie(evt:Event):void{
+						///pantallaIpad.unloadAndStop();
+						
+					
+						
+					
+						pantallaIpad.source=loader;
+						
+						var timer:Timer = new Timer(601, 2);
+						timer.addEventListener(TimerEvent.TIMER, enlaceSwfToFlex);
+						timer.start();
+						
+						function enlaceSwfToFlex(e:TimerEvent):void{
+							//solo del menu derecho con swf}	
+							accion();
+							cargador_1.visible=false;
+						}
+					
+						
+					}
+			
+			}
+			
+			
+			
+			/**
+			 * abrir presentacion 
+			 * cierra la presentacion al dar click
+			 */ 
+			public function clickAbrirPresentacion(e:MouseEvent):void{
+				
+				activarEnPresentacion();
+			}
+			
+			
+			
+			
+			
+			/***
+			 * controla lso cambios en el tamña de la pantalla
+			 * 
+			 */ 
+			public function miResize(e:Event):void{
+				
+				if(contenidoFull==false && (Screen.mainScreen.bounds.width<1200 || Screen.mainScreen.bounds.width>1300))
+				{
+					cambioTamaIpad(0.701);
+				}
+				
+				
+				//  --- >
+				
+			}
+			
+			
+			
+			/***
+			 * cambiar tamaño de Ipad 
+			 * */
+			public function cambioTamaIpad(porcentaje:Number):void{
+			
+				var nuevaEscala:Number=setEscala(porcentaje);
+				
+				
+				
+				imagen_dispositivo.width= nuevaEscala*imagen_dispositivo.width;
+				imagen_dispositivo.height= nuevaEscala*imagen_dispositivo.height;
+				
+				
+				pantallaIpad.width= nuevaEscala* pantallaIpad.width;
+				pantallaIpad.height= nuevaEscala*pantallaIpad.height;
+				
+				presentacion_html.width= nuevaEscala* pantallaIpad.width;
+				presentacion_html.height= nuevaEscala*pantallaIpad.height;
+				
+				cargador_1.width= nuevaEscala* pantallaIpad.width;
+				cargador_1.height= nuevaEscala*pantallaIpad.height;
+				
+				
+				//actualiza varibles de tamaño original
+				anchoContenido=imagen_dispositivo.width;
+				altoContenido=imagen_dispositivo.height;
+				
+				
+				trace(".............."+altoContenido+" -->"+anchoContenido);
+				
+				
+				anchoPantallaIpad=pantallaIpad.width;
+				altoPantallaIpad = pantallaIpad.height;
+				
+				
+			}
+			
+			
+			
+			/***
+			 * retorna el numero de escala que se ajuste basandose en el contenido y el tmaña de pantalla
+			 * @param Number variante el numero de porcentaje desde parte para luego dismuir hasta ajustarse
+			 * @return Number numero de esca l
+			 * 
+			 */
+			public function setEscala(variante:Number):Number{
+			
+				var posibleEscala:Number;
+				var pantalla:Rectangle=Screen.mainScreen.bounds;
+				do{
+					variante=variante-0.01;
+						
+					posibleEscala=((pantalla.width*variante)/imagen_dispositivo.width);
+				}while(posibleEscala*imagen_dispositivo.height-pantalla.height>5);
+				
+				
+				//trace(variante);
+				return posibleEscala;
+			}
+			
+			
+			
+			/****
+			 * activa el full pantallla 
+			 * 
+			 * 
+			 */ 
+			public function ajustaPantatalla():void{
+			
+				width=this.stage.nativeWindow.width;
+				height=this.stage.nativeWindow.height;
+			}
+			
+			
+			
+			
+			/****
+			 * muestra el splash definido 
+			 */ 
+			public function lanzarSplash():void
+			{
+				
+				cursorManager.setBusyCursor();// cursor en espera
+				
+				splash_1=new splash();
+				var pantalla:Rectangle=Screen.mainScreen.bounds;
+				visible=false;
+				
+				nativeWindow.width=300;
+				nativeWindow.height=300;
+				
+				
+				
+				
+				//*************************************
+				//ventana_contenido.addEventListener(Event.RESIZE,controlResize);// utiliza un rango para la ventna
+				
+				splash_1.accionExterna=mostrarVentanaContendios;// lo que debe hacer al cerrarce;
+				
+				splash_1.open();
+				nativeWindow.x=splash_1.nativeWindow.x=(pantalla.width-splash_1.width)/2;
+				nativeWindow.y=splash_1.nativeWindow.y=(pantalla.height-splash_1.height)/2;
+				
+				
+				
+				
+			
+			}
+			
+			
+			
+			
+			/******************
+			 * resaltar 
+			 * */
+			public function  resaltar(e:MouseEvent):void{
+			
+					e.target.alpha=0.5;
+			
+			}
+			
+			
+			
+			
+			
+			/***
+			 * mostara la ventan de contendios
+			 * 
+			 * */
+			public function mostrarVentanaContendios():void{
+				
+				
+				
+				visible=true;	
+				addEventListener(Event.RESIZE,miResize);
+				
+				/// dimensiona la ventna al mismo tamñna de pantalla para evitar el ESC
+				try{
+					this.nativeWindow.x=0;
+					this.nativeWindow.y=0;
+					this.nativeWindow.width=Screen.mainScreen.bounds.width;
+					this.nativeWindow.height=Screen.mainScreen.bounds.height;
+				}catch(e:Error){}
+				
+				
+				
+				
+				fullPantalla();// aumentar el total de la pantalla
+				//splashToContendio();
+				
+				
+				
+				cursorManager.removeAllCursors();//REMUEVE EL CURSOR DE ESPERA
+				
+				
+				miResize(new Event(Event.RESIZE));
+	
+				
+				
+				
+			}
+			
+			
+			
+			
+			/******************
+			 * resaltar 
+			 * */
+			public function  normal(e:MouseEvent):void{
+				
+				e.target.alpha=1;
+				
+			}
+			
+			
+			
+			/**********
+			 * funcion al dar cliente en presentacion 
+			 * 
+			 * */
+			public function  activarEnPresentacion():void{
+				//ajustaPantatalla();
+				
+				if(contenidoFull==false){
+					fondo_salidar_Ipad.visible=true;
+					
+					numeroEscala=setEscala(0.98);
+			
+					
+					toogleBarraIzq();
+					toogleMenuDerecho();
+				
+					
+					
+					//transicion para convertir ipad a pantalla full
+					var animacionH:AnimateProperty=new AnimateProperty(imagen_dispositivo);
+					animacionH.property="height";
+					animacionH.fromValue=imagen_dispositivo.height;
+					animacionH.toValue=Math.ceil(imagen_dispositivo.height*numeroEscala);
+					//animacionH.toValue=847;			
+					animacionH.duration=500;
+					animacionH.play();
+				
+					
+					var animacionA:AnimateProperty=new AnimateProperty(imagen_dispositivo);
+					animacionA.property="width";
+					animacionA.fromValue=imagen_dispositivo.width;
+					animacionA.toValue=Math.ceil(imagen_dispositivo.width*numeroEscala);
+					//animacionA.toValue=1200;
+					animacionA.duration=500;
+					animacionA.play();	
+					
+					
+				
+					maximizarElementos(pantallaIpad);					
+					
+					/**************
+					 * acomodar tamaño de presentacion
+					 * */
+					maximizarElementos(presentacion_html);
+										
+					
+					/**************cargador****************/
+					maximizarElementos(cargador_1);
+					
+					
+					
+					
+					
+					ajustaPantatalla();
+					toogleBanner();
+					contenidoFull=true;
+					grupo_botones.visible= false;
+					
+					
+				}
+				
+				
+				
+				
+			
+			}
+			
+			
+			/**************************
+			 * maximiza ene ele momento de maximo el IPad
+			 * */
+			public function maximizarElementos(elemento):void{
+			
+				var animacionCargador:AnimateProperty=new AnimateProperty(elemento);
+				animacionCargador.property="height";
+				animacionCargador.fromValue=elemento.height;
+				animacionCargador.toValue= Math.ceil(elemento.height*numeroEscala);
+				//animacionH.toValue=847;			
+				animacionCargador.duration=500;
+				animacionCargador.play();
+				
+				
+				var animacionCargadorA:AnimateProperty=new AnimateProperty(elemento);
+				animacionCargadorA.property="width";
+				animacionCargadorA.fromValue=anchoPantallaIpad;
+				animacionCargadorA.toValue= Math.ceil(elemento.width * numeroEscala);
+				//animacionA.toValue=1200;
+				animacionCargadorA.duration=500;
+				animacionCargadorA.play();	
+				
+				
+			}
+			
+			
+			
+			/**********
+			 * funcion al dar cliente en presentacion 
+			 * 
+			 * */
+			public function cerrarPresentacion():void{
+				
+				
+				
+				if(contenidoFull){
+					
+					/// valiciona del tipo de contenido que debe mostrar
+					// muestra por defecto el home
+					if(seccion==1)
+					{
+						presentacion_html.visible=false;
+					}
+					
+					pantallaIpad.visible=true;
+					seccion=0;
+					
+					
+					fondo_salidar_Ipad.visible=false;
+					
+					toogleBarraIzq();
+					toogleMenuDerecho();
+				
+					
+					//transicion para convertir ipad a tamaño normal o 
+					var animacionH:AnimateProperty=new AnimateProperty(imagen_dispositivo);
+					animacionH.property="height";
+					animacionH.fromValue=imagen_dispositivo.height;
+					animacionH.toValue=altoContenido;
+					//animacionH.toValue=847;			
+					animacionH.duration=500;
+					animacionH.play();
+					
+					
+					var animacionA:AnimateProperty=new AnimateProperty(imagen_dispositivo);
+					animacionA.property="width";
+					animacionA.fromValue=imagen_dispositivo.width;
+					animacionA.toValue=anchoContenido;
+					//animacionA.toValue=1200;
+					animacionA.duration=500;
+					animacionA.play();	
+					
+					
+					
+					
+					//decrementeo o volver a su tamña original  la pantalla del Ipad
+					//transicion para convertir ipad a tamaño normal o 
+					minizarElmento(pantallaIpad);				
+					
+					/***************cerrar presentacion ***************/
+					minizarElmento(presentacion_html);
+					
+					/***************cerrar presentacion ***************/
+					minizarElmento(cargador_1);
+					
+					
+					
+					
+				
+					toogleBanner();
+					
+					grupo_botones.visible=true;
+					contenidoFull=false;
+				}
+				
+				
+				
+				
+			}
+			
+			
+			
+			
+			
+			/************************
+			 * 
+			 * 
+			 * miniza el elemnto con efecto de animacion 
+			 * cuando 
+			 * */
+			private function minizarElmento(elemento):void{
+			
+				
+				var animacionHPresentacion:AnimateProperty=new AnimateProperty(elemento);
+				animacionHPresentacion.property="height";
+				animacionHPresentacion.fromValue=elemento.height;
+				animacionHPresentacion.toValue=altoPantallaIpad;
+				//animacionH.toValue=847;			
+				animacionHPresentacion.duration=500;
+				animacionHPresentacion.play();
+				
+				
+				var animacionAPresentacion:AnimateProperty=new AnimateProperty(elemento);
+				animacionAPresentacion.property="width";
+				animacionAPresentacion.fromValue=elemento.width;
+				animacionAPresentacion.toValue=anchoPantallaIpad;
+				//animacionA.toValue=1200;
+				animacionAPresentacion.duration=500;
+				animacionAPresentacion.play();	
+				
+				
+			
+			
+			}
+			
+			
+			/***************
+			 * oculta o muestra el menue de la derecha  
+			 * 
+			 * **/
+			public function toogleMenuDerecho():void{
+			
+				
+				if(banderaMenuDe==1)
+				{
+					ocultar_menu_lateral_de.play();
+					banderaMenuDe=2;
+					
+				
+				}
+				else{
+				
+					banderaMenuDe=1;
+					mostrar_menu_lateral_de.play();
+				}
+			}
+			
+			
+			
+			
+			
+			/***************
+			 * oculta o muestra el menue de la derecha  
+			 * 
+			 * **/
+			public function toogleBanner():void{
+				
+				
+				if(banderaBanner==1)
+				{
+					ocultar_banner.play();
+					banderaBanner=2;
+					
+				}
+				else{
+					
+					banderaBanner=1;
+					mostrar_banner.play();
+				}
+				
+				
+			}
+			
+			
+			
+			
+			public function fullPantalla():void{
+				//this.stage.scaleMode = StageScaleMode.EXACT_FIT;
+				//	this.stage.scaleMode = StageScaleMode.NO_BORDER;
+				
+				
+				this.stage.align = StageAlign.TOP_LEFT;
+				this.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				
+				
+				//	systemChrome.
+				
+			}
+			
+			
+			
+			/***************
+			 * oculta o muestra barra lateral izquierda  
+			 * 
+			 * **/
+			public function toogleBarraIzq():void{
+				
+				
+				if(banderaBarraIzq==1)
+				{
+					ocultar_barra_lateral_izquierda.play();
+					banderaBarraIzq=2;
+				
+					
+				}
+				
+				
+				
+				else{
+					
+					banderaBarraIzq=1;
+					mostrar_barra_lateral_izquierda.play();
+				}
+			}
+			
+			
+			
+			/***
+			 * 
+			 * cuando se carga el swf de Ipad
+			 */ 
+			protected function marcoIpad_completeHandler(event:Event):void
+			{
+				
+				var miObjecto:Object= Object(marcoIpad.content);
+				miObjecto.eventoButon=  cargarMenuPresentacion;
+				
+			}
+			
+			
+			
+			/****
+			 * cierre
+			 */ 
+			public function cerrarTotal():void{
+			
+				nativeWindow.close();
+			
+			}
+			
+			/***
+			 * 
+			 * cuando sele da click en cerrar
+			 */ 
+			public function clickEnCerrar(e:Event):void{
+				cerrarTotal();
+				
+				
+			}
+			
+			
+			
+			
+			public  var cargarContenidCompleto:Function =function(e:Event):void{
+			
+			};
+			
+			protected function pantallaIpad_completeHandler(event:Event):void
+			{
+				cargarContenidCompleto(event);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+	
+	
+	<fx:Declarations>
+		
+		<mx:AnimateProperty	id="ocultar_menu_lateral_de" target="{menu_lateral_derecho}" property="width" fromValue="{width*0.12}" toValue="0" duration="900" />
+		<mx:AnimateProperty	id="mostrar_menu_lateral_de" target="{menu_lateral_derecho}" property="width" fromValue="0" toValue="{width*0.12}" duration="900" />
+		
+		
+		<mx:AnimateProperty	id="ocultar_barra_lateral_izquierda" target="{barra_lateral_izquierda}" property="alpha" fromValue="1" toValue="0" duration="900" />
+		<mx:AnimateProperty	id="mostrar_barra_lateral_izquierda" target="{barra_lateral_izquierda}" property="alpha" fromValue="0" toValue="1" duration="900" />
+		
+		<mx:AnimateProperty	id="ampliar_w_imagen_dispositivo" target="{imagen_dispositivo}" property="width" fromValue="{width*0.75}" toValue="{1200}" duration="500" />
+		<mx:AnimateProperty	id="ampliar_h_imagen_dispositivo" target="{imagen_dispositivo}" property="height" fromValue="{height*0.80}" toValue="{847}" duration="500" />
+		
+		<mx:AnimateProperty	id="pq_w_imagen_dispositivo" target="{imagen_dispositivo}" property="width" fromValue="{width*0.91}" toValue="{834}" duration="500" />
+		<mx:AnimateProperty	id="pq_h_imagen_dispositivo" target="{imagen_dispositivo}" property="height" fromValue="{height*1.04}" toValue="{649}" duration="500" />
+		
+		
+		<mx:AnimateProperty	id="ocultar_banner" target="{banner}" property="top" fromValue="0" toValue="-612" duration="900" />
+		<mx:AnimateProperty	id="mostrar_banner" target="{banner}" property="top" fromValue="-612" toValue="0" duration="900" />
+		
+		
+		
+		
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	<s:BorderContainer left="0" right="0" top="0" bottom="0" styleName="fondo1">
+		
+		<s:BorderContainer left="0" right="0" top="0" bottom="0" styleName="fondo2">
+			
+			
+			
+			<!--	BARRA MENU LATERAL DERECHO -->
+			
+			<!--<s:Group right="0" width="83" height="411" verticalCenter="0">
+			-->
+			<s:Group right="0" id="menu_lateral_derecho" width="9%" height="90%" verticalCenter="10">
+				<!--
+				<s:SWFLoader left="0" right="0" top="0" bottom="0" autoLoad="true"
+							 scaleContent="true" source="assets/swf/marcoDe.swf">
+					
+				</s:SWFLoader>
+				-->
+				
+				
+				<!-- imagenes para construcicon -->
+				
+				<s:Image left="0" top="0" width="56" height="46" smooth="true"
+						 smoothingQuality="high" source="@Embed('assets/image/panelIzCentro1a.png')">					
+				</s:Image>
+					<s:BorderContainer left="56" right="0" top="0" height="46"
+								   backgroundImage="@Embed('assets/image/panelIzCentro1b.png')"
+								   backgroundImageFillMode="repeat" borderVisible="false">					
+				</s:BorderContainer>
+				
+				
+				<s:BorderContainer left="0" top="46" bottom="46" width="56"
+								   backgroundImage="@Embed('assets/image/panelIzCentro3a.png')"
+								   backgroundImageFillMode="repeat" borderVisible="false">					
+				</s:BorderContainer>
+				<s:BorderContainer left="55" right="0" top="46" bottom="46"
+								   backgroundImage="@Embed('assets/image/panelIzCentro3b.png')"
+								   backgroundImageFillMode="repeat" borderVisible="false">					
+				</s:BorderContainer>
+				
+				
+				<s:Image left="0" bottom="0" width="56" height="46" smooth="true"
+						 smoothingQuality="high" source="@Embed('assets/image/panelIzCentro2a.png')">					
+				</s:Image>
+				<s:BorderContainer left="56" right="0" bottom="0" height="46"
+								   backgroundImage="@Embed('assets/image/panelIzCentro2b.png')"
+								   backgroundImageFillMode="repeat" borderVisible="false">					
+				</s:BorderContainer>
+				
+				
+				
+				<s:VGroup left="20" right="0" top="41" bottom="40" horizontalAlign="right">
+					
+					<!-- bton 1 -->
+					<s:VGroup left="0" right="0" width="100%" height="24%" gap="0"
+							  horizontalAlign="center">
+						<s:Image x="0" y="0" width="90%" height="90%" scaleMode="letterbox"
+								 smooth="true" smoothingQuality="high"
+								 source="@Embed('assets/image/btonLateral1.png')"/>
+						<s:Label left="0" right="0" bottom="-10" height="25" color="#006E73"
+								 fontSize="14" paddingLeft="5" styleName="titulo_menuDe"
+								 textAlign="center" verticalAlign="top">Evaluación</s:Label>
+					</s:VGroup>
+					
+					
+					<!-- bton 2 -->
+					<s:VGroup id="bton_presentacion" left="0"  buttonMode="true" right="0" width="100%" height="24%" gap="0"
+						  horizontalAlign="center">
+						
+						
+						<s:Image x="0" y="0" width="90%" height="90%" scaleMode="letterbox"
+									   smooth="true" smoothingQuality="high"
+							 source="assets/image/btonLateral2.png"/>
+						
+						<s:Label left="0" right="0" bottom="-10" height="25" color="#00777B"
+								 fontSize="14" paddingLeft="5" styleName="titulo_menuDe"
+								 textAlign="center" verticalAlign="top">Presentación</s:Label>
+					</s:VGroup>
+					
+					
+					
+					<!-- bton 3 -->
+					<s:VGroup id="bton_bloc"
+						left="0" right="0" width="100%" height="24%" gap="0"
+							  horizontalAlign="center">
+								  	<s:Image x="0" y="0" width="90%" height="90%" scaleMode="letterbox"
+												  smooth="true" smoothingQuality="high"
+							 source="assets/image/btonLateral3.png"/>
+						<s:Label left="0" right="0" bottom="-10" height="25" color="#00777B"
+								 fontSize="14" paddingLeft="5" styleName="titulo_menuDe"
+								 textAlign="center" verticalAlign="top">Bloc de notas</s:Label>
+					</s:VGroup>
+					
+					<!-- bton 4 -->
+					<s:VGroup left="0" right="0" width="100%" height="24%" gap="0"
+							  horizontalAlign="center">
+								  	<s:Image x="0" y="0" width="90%" height="90%" scaleMode="letterbox"
+												  smooth="true" smoothingQuality="high"
+							 source="assets/image/btonLateral4.png"/>
+						<s:Label left="0" right="0" bottom="-10" height="25" color="#2B3F60"
+								 fontSize="14" paddingLeft="5" styleName="titulo_menuDe"
+								 textAlign="center" verticalAlign="top">Búsqueda</s:Label>
+						
+					</s:VGroup>
+				</s:VGroup>
+			
+			</s:Group>
+			
+			
+			
+			
+			
+			
+			<!-- ELEMENTO LATERAL IZQUERDA -->
+			<s:Group x="0" top="0" id="barra_lateral_izquierda" bottom="0" width="15%" >
+			
+				<!--  logo --> 
+			<s:SWFLoader left="0" right="10" top="0" height="40%" source="assets/swf/logo.swf">				
+			</s:SWFLoader>	
+				
+				
+				<!-- barra de logos -->
+				<s:VGroup left="5" bottom="50" width="100%" height="45%" gap="10"
+						  horizontalAlign="center" verticalAlign="bottom">
+					<s:Image width="158" height="42" smooth="true" smoothingQuality="high"
+							 source="assets/image/minTic.png">						
+					</s:Image>
+					
+					<s:Image width="158" height="42" smooth="true" smoothingQuality="high"
+							 source="assets/image/cociencias.png">						
+					</s:Image>
+					
+					<s:SWFLoader  width="100%" height="40%" source="assets/swf/escudo.swf">						
+					</s:SWFLoader>
+					
+					<s:SWFLoader width="100%" height="20%" source="assets/swf/parque.swf">						
+					</s:SWFLoader>
+				</s:VGroup>
+			</s:Group>
+			
+			
+			
+			<!-- fondo para salida al dar click -->
+			<s:BorderContainer id="fondo_salidar_Ipad" width="100%" height="100%"
+						visible="false"	   backgroundAlpha="0.0"></s:BorderContainer>
+			
+			
+			
+			
+			
+			<!-- 	IPAD -->
+			<s:Group id="imagen_dispositivo" width="912" height="644" horizontalCenter="0"
+					 verticalCenter="0">
+							
+				<s:SWFLoader  id="marcoIpad" complete="marcoIpad_completeHandler(event)" left="0" right="0" top="0" bottom="0" 
+						
+						 source="assets/swf/ipad.swf"/>
+				
+				
+				<s:SWFLoader id="pantallaIpad" width="760" height="570" maxWidth="{width}"
+							 maxHeight="{height}" complete="pantallaIpad_completeHandler(event)"
+							 horizontalCenter="-8" scaleContent="true" verticalCenter="2">
+			
+				</s:SWFLoader>
+				
+				
+				
+				<mx:HTML id="presentacion_html" width="760" height="570" maxWidth="{width}"
+						 maxHeight="{height}"  borderVisible="false"
+						 visible="false"
+						complete=" enlaceAS3_Javascript()"
+						 horizontalCenter="-8"  verticalCenter="2"
+						 />
+				
+				
+				
+				
+				
+				<s:SWFLoader id="cargador_1" visible="false" width="760" height="570" maxWidth="{width}"
+						 maxHeight="{height}" horizontalCenter="-8"
+						 source="assets/swf/cargando.swf" verticalCenter="2"
+						 
+						>
+					
+				</s:SWFLoader>
+				
+			</s:Group>
+			<!-- 	fin IPAD -->
+		
+			
+			
+			<!--  botones de configuracion --> 
+			<s:HGroup id="grupo_botones" right="5" top="5" width="139" height="40" >
+				<s:SWFLoader width="40" height="40" source="assets/swf/btonPregunta.swf">
+					
+				</s:SWFLoader>
+				
+				
+				<s:SWFLoader  width="40" height="40" source="assets/swf/btonI.swf">
+					
+				</s:SWFLoader>
+				
+				
+				<s:SWFLoader id="cerrar"   width="40" height="40" source="assets/swf/btonX.swf">
+					
+				</s:SWFLoader>
+			</s:HGroup>
+			
+			
+			
+		</s:BorderContainer>
+		
+		
+		
+		
+		<s:Image id="banner" top="0" width="612" height="52" horizontalCenter="0" smooth="true"
+				 smoothingQuality="high" source="assets/image/banner.png"/>
+		
+		
+	</s:BorderContainer>
+	
+
+	
+	
+</s:WindowedApplication>

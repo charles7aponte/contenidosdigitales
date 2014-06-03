@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="316" height="368" backgroundAlpha="0.0" backgroundColor="#97A0A7"
+			   close="closeWindow(event)" contentBackgroundAlpha="0.0" creationComplete="init()"
+			   skinClass="clases.skins.popup_cerrar" title="Confirmar salida">
+
+	<fx:Script>
+		<![CDATA[
+			import clases.Global;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			
+			
+			
+			
+			public  var datos:ArrayCollection=new ArrayCollection(); 
+			public  var archivo:FileReference = new FileReference();
+			
+			
+			
+			
+			public function init():void{
+			
+				
+				bton_aceptar.addEventListener(MouseEvent.CLICK,acepta_bton);
+				//bton_cancelar.addEventListener(MouseEvent.CLICK,cancelar_bton);
+				
+				//bton_aceptar.addEventListener(MouseEvent.CLICK,guardarClick);			
+				
+				archivo.addEventListener(Event.COMPLETE, fileSaved); 
+				
+				
+				
+			
+					
+			}
+			
+			
+			
+			/**********************************
+			 * 
+			 * Monento de cargar
+			 * **/
+			public function fileSaved(event:Event):void 
+			{ 
+				Alert.show("Se ha guardado","");
+			}
+			
+			
+			
+			/********************************
+			 * guardar el archivo
+			 * **/
+			public function guardarClick(e:MouseEvent):void{
+			
+				archivo.save(mi_contenido.text,"bloc.txt");
+			
+			}
+			
+			
+			
+			
+			/****
+			 * acciones para cerrar el popup 
+			 * */
+			public  function acepta_bton(e:MouseEvent):void
+			{
+			
+				PopUpManager.removePopUp(this);
+							
+			}
+			
+			
+			
+			/****
+			 * acciones para cerrar el popup 
+			 * */
+			public  function cancelar_bton(e:MouseEvent):void
+			{
+				
+				PopUpManager.removePopUp(this);
+				
+				
+			}
+			
+			/******
+			* cierra y remueve elemento del popup 
+			 * 
+			 * */
+			private function closeWindow(e:CloseEvent):void {
+				PopUpManager.removePopUp(this);
+				
+				//Global.motorPreguntas.siguientePregunta();
+				
+			}
+			
+		
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:Image x="-43" y="-60" width="410" height="408" source="assets/image/evaluacion/fondo2.png">
+		
+	</s:Image>
+		
+		
+		<s:TextArea id="mi_contenido" x="43" y="41" width="261" height="275" borderColor="#FFF6F6"
+					chromeColor="#FFFFFF" contentBackgroundColor="#FFFFFF"
+					text="JJJJJJJJJJJJJJ&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;&#xd;FDSAF&#xd;"/>
+	
+	<s:Image id="bton_aceptar" x="-4" y="10" width="36" height="35" smooth="true"
+			 source="assets/bton1_o.png"/>
+</s:TitleWindow>

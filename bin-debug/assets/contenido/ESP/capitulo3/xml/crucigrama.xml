@@ -1,0 +1,78 @@
+<!-- 
+Instrucciones para agregar un nuevo crucigrama
+
+Cree el tablero del crucigrama dentro de las etiquetas <tablero> y </tablero> con las respuestas en MAYUSCULA y con un punto "." los espacios en blanco, ejemplo:
+
+PATO..............,
+E.E....O..........,
+R.R....ILUSION....,
+RANA...D..I..A....,
+O.E....A..L..C....,
+..ROEDOR..L..E....,
+..O.......A..R....
+
+Al final de cada fila, agregue una coma para indicar el fin de la linea.
+el tamaño del tablero es de 18 casillas de largo (18 columnas) y 7 casillas de alto (7 filas)
+al terminar de editar el tablero, elimine los espacios y los saltos de linea, al terminar quedara algo asi:
+
+<tablero>PATO..............,E.E....O..........,R.R....ILUSION....,RANA...D..I..A....,O.E....A..L..C....,..ROEDOR..L..E....,..O.......A..R....</tablero>
+
+Luego, dentro de la etiqueta preguntas, editen las preguntas. LA PRIMER PREGUNTA ESTARA RELACIONADA CON LA PRIMER RESPUESTA.
+El numero máximo de preguntas se definio como 9.
+Se pueden crear la cantidad de crucigramas que se desee, se carga aleatoriamente, cada crucigrama esta dentro de etiquetas "item".
+
+Atributos de las respuestas:
+
+- Fila: se le indica al sistema en que fila inicia la respuesta dentro del tablero, las filas van de arriba hacia abajo y empiezan en 0 :
+
+0
+1
+2
+3
+.
+.
+.
+
+- Columna: Se le indica al sistema en que columna inicia la respuesta dentro del tablero, las columnas van de izquierda a derecha y empiezann en 0:
+
+0 1 2 3 . . .
+
+- direccion: Para orientar al sistema para que dibuje en el tablero se le da la direccion de la respuesta desde donde inicia, asi:
+
+1. Inicia de abajo hacia arriba 
+2. Inicia de izquierda a derecha
+3. Inicia de arriba hacia abajo
+4. Inicia de derecha a izquierda
+
+Asi:
+
+1↑
+2→
+3↓
+4←
+
+- Longitud: Cantidad de caracteres que contiene la palabra
+-->
+
+
+<crucigrama>
+	<item>
+		<tablero>COMPLACIENTE......,...........V......,...........A......,...........S......,......CONFLICTO...,..COMPETITIVO.....,...PERCEPCION.....</tablero>
+		<preguntas>
+			<pregunta>Quien asume este estilo sólo se preocupa por preservar y mantener la relación con el otro y que este satisfaga sus intereses y necesidades.</pregunta>
+			<pregunta>Evade el conflicto, no lo afronta</pregunta>
+			<pregunta>Situación que se da cuando personas o grupos perciben que sus ideas, son incompatibles.</pregunta>
+			<pregunta>Actitud que satisface intereses propios, sin importar las necesidades del otro. </pregunta>
+			<pregunta>Razón que indica que un conflicto se da cuando las personas involucradas interpretan los hechos de manera distinta.</pregunta>
+		</preguntas>
+		
+		<respuestas>
+			<respuesta fila="0" columna="0" direccion="2" longitud="12">COMPLACIENTE</respuesta>
+			<respuesta fila="0" columna="11" direccion="3" longitud="7">EVASIVO</respuesta>
+			<respuesta fila="4" columna="6" direccion="2" longitud="9">CONFLICTO</respuesta>
+			<respuesta fila="5" columna="2" direccion="2" longitud="11">COMPETITIVO</respuesta>
+			<respuesta fila="6" columna="3" direccion="2" longitud="10">PERCEPCION</respuesta>
+		</respuestas>
+	</item>
+
+</crucigrama>

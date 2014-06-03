@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- aircomponents/src/myComponents/DocumentWindow.mxml -->
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="500" height="361" backgroundAlpha="0.0" backgroundColor="#F5F9FA"
+		  contentBackgroundAlpha="0.0" creationComplete="init(event)" fontFamily="Verdana"
+		  showStatusBar="false" systemChrome="none" transparent="true">
+
+	<fx:Script>
+		<![CDATA[
+			import clases.Global;
+			
+			import mx.managers.CursorManager;
+			public var accionExterna :Function=function():void{};
+			
+			
+			public function init(e:Event):void{
+				
+				
+				var timer:Timer = new Timer(Global.TIEMPO_SPLASH, 1);
+				timer.addEventListener(TimerEvent.TIMER,accionCerrarAplicacion );
+				timer.start();
+			
+			
+				
+				
+				
+				cursorManager.setBusyCursor();// cursor en espera
+				
+				
+	
+			
+			}
+			
+			
+			
+			
+			
+			
+			
+			/**
+			 * *
+			 * */
+			public function accionCerrarAplicacion(e:TimerEvent):void{
+				cursorManager.removeAllCursors();/// volver cursor a la normalidad
+				nativeWindow.close();
+				accionExterna();
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+	
+	<fx:Style source="micss.css"/>
+	<s:Image left="0" right="0" top="0" bottom="0" smooth="true" smoothingQuality="high"
+			 source="assets/image/SPLASH.png"/>	
+	
+	
+	
+</s:Window>

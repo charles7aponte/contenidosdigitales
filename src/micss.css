@@ -1,0 +1,55 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+
+s|Group
+{
+	chromeColor: #4B3838;
+	contentBackgroundColor: #9A2A2A;
+
+	
+}
+	
+
+
+@font-face {
+	src:url("assets/font/fuente.ttf");
+	font-family: miFuenteIncrustada2;
+}
+
+
+
+CursorManager
+{
+	/* You can use PNGs, SWFs or JPEGs */
+	move: Embed(source="move.png");
+}
+
+
+.titulo_menuDe{
+	font-family: miFuenteIncrustada;
+	lineHeight:20px;
+	
+}
+
+.fondo1{
+	background-image : Embed("assets/image/patron-fondo1.jpg");
+	background-image-fill-mode : repeat;
+
+
+}
+
+
+.fondo2{
+	background-image : Embed("assets/image/patron-fondo1.jpg");
+	background-image-fill-mode : repeat;
+
+	
+}
+
+global
+{
+	content-background-alpha: 1.0;
+	content-background-color: #101655;
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0"  encoding="UTF-8"?> 
+<!-- capitulo 4 .. SISTEMA MOTRIZ -->
+<cbt>
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf" texto="Que  función tiene el SHIMMY DAMPER en la rueda detalantera del tren de aterrizaje"  puntos="1">
+		<opcion puntaje="-1"  >Mantiene el nivel de presión requerido de la rueda</opcion>
+		<opcion puntaje="-1"  >Absorbe el peso generado por el avión cargado</opcion>
+		<opcion puntaje="-1"  >Es el sistema de frenos de la llanta delantera mediante el accionamiento de las pastillas y el sistema hidraulico. </opcion>
+		<opcion puntaje="1"  >Absorbe las vibraciones u oscilaciones de izquierda a derecha que tiene la rueda durante el despliegue y aterrizaje.</opcion>
+	</pregunta>
+	
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf"  texto="Cual es el angulo de giro del la rueda delantera para hacer giros con los pedales"  puntos="1">
+		<opcion puntaje="1"  >15 °</opcion>
+		<opcion puntaje="-1"  >10°</opcion>
+		<opcion puntaje="-1"  >25°</opcion>
+		<opcion puntaje="-1"  >51,5°</opcion>
+	</pregunta>
+	
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf"  texto="Cual es el angulo de giro del la rueda delantera para hacer giros cuando se tiene aplicado de freno de Parqueo"  puntos="1">
+		<opcion puntaje="-1"  >15 °</opcion>
+		<opcion puntaje="-1"  >10°</opcion>
+		<opcion puntaje="-1"  >25°</opcion>
+		<opcion puntaje="1"  >51,5°</opcion>
+	</pregunta>
+	
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf"  texto="¿Como se acciona el freno de parqueo?"  puntos="1">
+		<opcion puntaje="1"  >Jalando hacia afuera la barra "PARKING BREAK PULL" que se encuentra en la parte inferior-centro de la cabina </opcion>
+		<opcion puntaje="-1"  >Oprimiendo la barra"PARKING BREAK PULL" que se encuentra en la parte inferior-centro de la cabina </opcion>
+		<opcion puntaje="-1"  >Oprimiendo el botón "PARKING BREAK PULL" que se ecuentra en la parte posterior (techo) de la cabina</opcion>
+		<opcion puntaje="-1"  >Accionando el Switch "PARKIN BREAK SWITCH" que se encuentra en el tablero electrico a la izquierda de la cabina</opcion>
+	</pregunta>
+	
+	
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf"  texto="Los frenos que estan basados en un sistema hidraulico contiene un contiene un  reservorio de liquido. ¿En que lugar del avión se encuentra el reservorio?"  puntos="1">
+		<opcion puntaje="1"  >Delante del FIREWALL, costado izqueirdo del motor</opcion>
+		<opcion puntaje="-1"  >Atrás del FIREWALL, costado izquierdo del motor</opcion>
+		<opcion puntaje="-1"  >En el interior de la cabina en el costado de la silla del piloto.</opcion>
+		<opcion puntaje="-1"  >En el interior de la cabina en el costado de la silla del copiloto.</opcion>
+	</pregunta>
+	
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf"  texto="¿El amortiguamiento que tiene el avion esta basado en ?"  puntos="1">
+		<opcion puntaje="-1"  >Un conjunto de amortiguadores hidráulicos en cada una de sus ruedas</opcion>
+		<opcion puntaje="1"  >En un elemento elastico que conforma el muelle que une la rueda traseras al avión</opcion>
+		<opcion puntaje="-1"  >El avión no contiene un sistema de amortiguamiento. </opcion>
+		<opcion puntaje="-1"  >Se tiene amortiguamiento en la rueda de nariz conformado por el SHIMMY DAMPER</opcion>
+	</pregunta>
+	
+	<pregunta tipo="SE1"  ruta="assets/ESP/evaluacion/pregunta_1.swf"  texto="Para encender la bomba electrica auxiliar se debe accionar el Switch"  puntos="1">
+		<opcion puntaje="-1"  >FUEL BOOST</opcion>
+		<opcion puntaje="-1"  >STARTER</opcion>
+		<opcion puntaje="-1"  >GENERATOR</opcion>
+		<opcion puntaje="-1"  >BATTERY</opcion>
+	</pregunta>
+		
+	
+	<pregunta tipo="SE1"  ruta="assets/evaluacion/pregunta_1.swf"  texto="¿Los frenos esta implementado en un sistema??"  puntos="1">
+		<opcion puntaje="1"  >Mecanico - Hidraulico</opcion>
+		<opcion puntaje="-1"  >Electro-Hidraulico</opcion>
+		<opcion puntaje="-1"  >Electro-Mecanico</opcion>
+		<opcion puntaje="-1"  >Hidraulico</opcion>
+	</pregunta>
+	
+
+</cbt>

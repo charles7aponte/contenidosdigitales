@@ -1,0 +1,19 @@
+<?xml version="1.0"  encoding="UTF-8"?> 
+<contenido>
+	<path  id="1" texto="" ruta="assets/contenido/$IDIOMA$/capitulo1/contenido.swf">
+	</path>
+
+	<path  id="2" texto="" ruta="assets/contenido/$IDIOMA$/capitulo2/contenido.swf">
+	</path>	
+
+	<path  id="3" texto="" ruta="assets/contenido/$IDIOMA$/capitulo3/contenido.swf">
+	</path>
+
+	<path  id="4" texto="" ruta="assets/contenido/$IDIOMA$/capitulo4/contenido.swf">
+	</path>
+
+	<path  id="5" texto="" ruta="assets/contenido/$IDIOMA$/capitulo5/contenido.swf">
+	</path>	
+	
+	
+</contenido>	
